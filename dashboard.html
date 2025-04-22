@@ -8,7 +8,6 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
     body { display: flex; height: 100vh; background-color: #f5f7fa; }
 
-    /* Sidebar */
     .sidebar {
       width: 240px;
       background-color: #2c3e50;
@@ -25,29 +24,32 @@
       display: block;
     }
 
-    /* Main */
     .main {
       flex: 1;
       display: flex;
       flex-direction: column;
     }
 
-    /* Top Bar */
     .topbar {
       background-color: white;
       padding: 1rem 2rem;
       border-bottom: 1px solid #ddd;
     }
 
-    /* Dashboard Content */
     .dashboard-content {
       padding: 2rem;
       overflow-y: auto;
     }
 
+    .welcome {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      color: #2c3e50;
+    }
+
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1rem;
       margin-bottom: 2rem;
     }
@@ -56,13 +58,26 @@
       background-color: white;
       padding: 1.5rem;
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .card h3 { margin-bottom: 0.5rem; font-size: 1.1rem; }
+    .card p { font-size: 0.95rem; color: #555; }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      background-color: #3498db;
+      color: white;
+      margin-top: 0.25rem;
     }
 
     .section-title {
-      margin: 1rem 0 0.5rem;
+      margin: 1.5rem 0 0.75rem;
       font-size: 1.2rem;
       font-weight: bold;
+      color: #2c3e50;
     }
 
     .insights, .alerts {
@@ -72,17 +87,30 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.05);
       margin-bottom: 1rem;
     }
+
+    .alerts p {
+      color: #c0392b;
+    }
+
+    .insights p {
+      color: #2c3e50;
+    }
+
+    .highlight {
+      color: #27ae60;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <div class="sidebar">
     <h2>TacitGraph</h2>
     <a href="dashboard.html">Home</a>
-<a href="knowledge-network.html">Knowledge Network</a>
-<a href="expert-discovery.html">Expert Discovery</a>
-<a href="risk-alerts.html">Risk Alerts</a>
-<a href="lnd-insights.html">L&D Insights</a>
-<a href="admin-panel.html">Admin Panel</a>
+    <a href="knowledge-network.html">Knowledge Network</a>
+    <a href="expert-discovery.html">Expert Discovery</a>
+    <a href="risk-alerts.html">Risk Alerts</a>
+    <a href="lnd-insights.html">L&D Insights</a>
+    <a href="admin-panel.html">Admin Panel</a>
   </div>
 
   <div class="main">
@@ -91,36 +119,44 @@
     </div>
 
     <div class="dashboard-content">
+      <div class="welcome">
+        Welcome to <strong>TacitGraph</strong> — your organization's intelligence layer for uncovering hidden expertise, assessing attrition risk, and enhancing learning pathways.
+      </div>
+
       <div class="cards">
         <div class="card">
-          <h3>Active Knowledge Hubs</h3>
-          <p>12 key contributors identified</p>
+          <h3>Knowledge Hubs</h3>
+          <p>12 active hubs driving project momentum.</p>
+          <div class="status-badge">Stable</div>
         </div>
         <div class="card">
-          <h3>At-Risk Knowledge Areas</h3>
-          <p>3 areas flagged this week</p>
+          <h3>At-Risk Areas</h3>
+          <p>3 flagged knowledge silos this week.</p>
+          <div class="status-badge" style="background:#e74c3c;">Alert</div>
         </div>
         <div class="card">
-          <h3>Collaboration Density</h3>
-          <p>High across 4 cross-functional teams</p>
+          <h3>Collaboration Index</h3>
+          <p>+12% week-over-week increase in cross-domain activity.</p>
+          <div class="status-badge" style="background:#27ae60;">Rising</div>
         </div>
         <div class="card">
           <h3>Mentorship Signals</h3>
-          <p>24 peer learning interactions</p>
+          <p>24 peer learning sessions detected across teams.</p>
+          <div class="status-badge" style="background:#f39c12;">In Progress</div>
         </div>
       </div>
 
       <div class="section-title">Recent Insights</div>
       <div class="insights">
-        <p>• DataOps team identified as high-influence node in onboarding process.</p>
-        <p>• Peer mentoring trend spotted in Product and UX teams.</p>
-        <p>• AI flagged potential expert in process optimization (Sales Ops).</p>
+        <p>• <span class="highlight">DataOps</span> team is the most connected across onboarding and enablement workflows.</p>
+        <p>• <span class="highlight">UX & Product</span> teams show natural mentoring clusters with high interaction density.</p>
+        <p>• AI surfaced <strong>Amit (Sales Ops)</strong> as an emerging expert in cross-tool integration strategy.</p>
       </div>
 
       <div class="section-title">Knowledge Risk Alerts</div>
       <div class="alerts">
-        <p>⚠️ Senior ML Engineer inactive for 3 weeks – key in 2 tacit domains.</p>
-        <p>⚠️ Risk of silent attrition in Customer Insights team.</p>
+        <p>⚠️ <strong>Senior ML Engineer</strong> inactive for 3 weeks — linked to critical deployment strategy knowledge.</p>
+        <p>⚠️ Risk of silent attrition in <strong>Customer Insights</strong> due to declining interaction frequency.</p>
       </div>
     </div>
   </div>

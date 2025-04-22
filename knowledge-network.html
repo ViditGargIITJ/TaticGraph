@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Network Graph</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f7fa;
+        }
+        
+        .sidebar {
+            width: 240px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #3d5163;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 1.3rem;
+        }
+        
+        .sidebar-menu {
+            margin-top: 20px;
+        }
+        
+        .sidebar-menu ul {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .sidebar-menu li:hover, .sidebar-menu li.active {
+            background-color: #3d5163;
+        }
+        
+        .sidebar-menu li i {
+            margin-right: 10px;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            width: calc(100% - 240px);
+        }
+        
+        .topbar {
+            background-color: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .topbar h1 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .graph-container {
+            padding: 20px;
+            height: calc(100vh - 70px);
+        }
+        
+        .graph-area {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .node circle {
+            stroke: white;
+            stroke-width: 2px;
+        }
+        
+        .node text {
+            font-size: 12px;
+            fill: #333;
+        }
+        
+        .link {
+            stroke-opacity: 0.8;
+        }
+        
+        .arrow {
+            fill: #ff8c00;
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .legend-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .legend-line {
+            width: 25px;
+            height: 3px;
+            margin-right: 8px;
+        }
+        
+        .tooltip {
+            position: absolute;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 5px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 200px;
+        }
+        
+        /* Custom styles for role colors */
+        .influencer {
+            fill: #4285F4; /* Blue */
+        }
+        
+        .collaborator {
+            fill: #34A853; /* Green */
+        }
+        
+        .at-risk {
+            fill: #EA4335; /* Red */
+        }
+        
+        .mentor {
+            fill: #9C27B0; /* Purple */
+        }
+        
+        /* Link styles */
+        .intra-team {
+            stroke: #34A853;
+            stroke-width: 2px;
+        }
+        
+        .cross-team {
+            stroke: #ff8c00;
+            stroke-width: 2px;
+            stroke-dasharray: 5, 5;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Tacit Knowledge Discovery</h2>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li class="active"><a href="dashboard.html">Home</a></li>
+		
+                <li><a href="knowledge-network.html">Knowledge Network</a></li>
+                <li><a href="expert-discovery.html">Expert Discovery</a></li>
+                <li><a href="risk-alerts.html">Risk Alerts</a></li>
+                <li><a href="lnd-insights.html">L&D Insights</a></li>
+                <li><a href="admin-panel.html">Admin Panel</a></li>
+               
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <h1>Knowledge Network</h1>
+            <div>
+                <select id="department-filter">
+                    <option value="all">All Departments</option>
+                    <option value="engineering">Engineering</option>
+                    <option value="design">Design</option>
+                    <option value="management">Management</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="graph-container">
+            <div class="graph-area">
+                <svg id="knowledge-graph"></svg>
+                <div class="legend">
+                    <div class="legend-title">Legend</div>
+                    <!-- Role Types -->
+                    <div class="legend-item">
+                        <div class="legend-color influencer"></div>
+                        <div>Influencers (Blue): High Knowledge Centrality</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color collaborator"></div>
+                        <div>Collaborators (Green): Supportive Team Members</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color at-risk"></div>
+                        <div>At-Risk (Red): Potential Knowledge Loss</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color mentor"></div>
+                        <div>Mentors (Purple): Knowledge Sharing</div>
+                    </div>
+                    
+                    <!-- Link Types -->
+                    <div class="legend-item">
+                        <div class="legend-line intra-team"></div>
+                        <div>Intra-team Links: Knowledge Sharing within Team</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line cross-team"></div>
+                        <div>Cross-team Links: Knowledge Transfer Across Teams</div>
+                    </div>
+                    <div class="legend-item">
+                        <svg width="30" height="15">
+                            <defs>
+                                <marker id="legend-arrow" viewBox="0 0 10 10" refX="5" refY="5"
+                                    markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff8c00" />
+                                </marker>
+                            </defs>
+                            <line x1="0" y1="7" x2="25" y2="7" stroke="#ff8c00" stroke-width="2" marker-end="url(#legend-arrow)" />
+                        </svg>
+                        <div>Knowledge Transfer: Tacit Knowledge Flow</div>
+                    </div>
+                </div>
+                <div class="tooltip"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for the knowledge network
+        const data = {
+            nodes: [
+                { id: 1, name: "Rahul", role: "R&D Lead", type: "influencer", team: "engineering", knowledge: ["Architecture", "System Design", "Team Leadership"] },
+                { id: 2, name: "Priya", role: "Senior Developer", type: "mentor", team: "engineering", knowledge: ["Backend", "Database Design", "Mentoring"] },
+                { id: 3, name: "Anita", role: "UX Designer", type: "collaborator", team: "design", knowledge: ["User Research", "Prototyping", "Design Systems"] },
+                { id: 4, name: "Vikram", role: "DevOps", type: "influencer", team: "engineering", knowledge: ["CI/CD", "Cloud Architecture", "Infrastructure"] },
+                { id: 5, name: "Aarav", role: "Junior Developer", type: "collaborator", team: "engineering", knowledge: ["Frontend", "Testing"] },
+                { id: 6, name: "Neha", role: "Product Manager", type: "mentor", team: "management", knowledge: ["Product Strategy", "Stakeholder Management", "Agile"] },
+                { id: 7, name: "Raj", role: "UI Developer", type: "at-risk", team: "design", knowledge: ["CSS", "JavaScript", "UI Animation"] },
+                { id: 8, name: "Meera", role: "QA Lead", type: "collaborator", team: "engineering", knowledge: ["Testing Strategy", "Automation", "Quality Processes"] },
+                { id: 9, name: "Sanjay", role: "CTO", type: "influencer", team: "management", knowledge: ["Technology Strategy", "Enterprise Architecture", "Leadership"] },
+                { id: 10, name: "Divya", role: "Data Scientist", type: "at-risk", team: "engineering", knowledge: ["Machine Learning", "Data Analysis", "Statistical Modeling"] },
+                { id: 11, name: "Arjun", role: "Technical Writer", type: "collaborator", team: "design", knowledge: ["Documentation", "User Guides", "Content Strategy"] },
+                { id: 12, name: "Kavita", role: "Scrum Master", type: "mentor", team: "management", knowledge: ["Agile Practices", "Team Facilitation", "Process Improvement"] }
+            ],
+            links: [
+                { source: 1, target: 2, type: "intra-team", direction: true },
+                { source: 1, target: 5, type: "intra-team", direction: true },
+                { source: 2, target: 5, type: "intra-team", direction: true },
+                { source: 1, target: 4, type: "intra-team", direction: false },
+                { source: 1, target: 3, type: "cross-team", direction: true },
+                { source: 3, target: 7, type: "intra-team", direction: true },
+                { source: 4, target: 8, type: "intra-team", direction: false },
+                { source: 6, target: 3, type: "cross-team", direction: true },
+                { source: 6, target: 1, type: "cross-team", direction: true },
+                { source: 9, target: 1, type: "cross-team", direction: true },
+                { source: 9, target: 6, type: "intra-team", direction: true },
+                { source: 2, target: 10, type: "intra-team", direction: true },
+                { source: 3, target: 11, type: "intra-team", direction: false },
+                { source: 6, target: 12, type: "intra-team", direction: false },
+                { source: 12, target: 5, type: "cross-team", direction: true },
+                { source: 12, target: 8, type: "cross-team", direction: true },
+                { source: 4, target: 10, type: "intra-team", direction: true },
+                { source: 7, target: 11, type: "intra-team", direction: false },
+                { source: 9, target: 12, type: "intra-team", direction: true }
+            ]
+        };
+
+        // Set up the SVG and force simulation
+        const width = document.querySelector('.graph-area').clientWidth;
+        const height = document.querySelector('.graph-area').clientHeight;
+        const svg = d3.select("#knowledge-graph");
+        
+        // Define arrow markers for directed links
+        svg.append("defs").selectAll("marker")
+            .data(["arrow"])
+            .enter().append("marker")
+            .attr("id", d => d)
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", 25)
+            .attr("refY", 5)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M 0 0 L 10 5 L 0 10 z")
+            .attr("class", "arrow");
+        
+        // Create a tooltip div
+        const tooltip = d3.select(".tooltip");
+        
+        // Create a force simulation
+        const simulation = d3.forceSimulation(data.nodes)
+            .force("link", d3.forceLink(data.links).id(d => d.id).distance(150))
+            .force("charge", d3.forceManyBody().strength(-400))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collide", d3.forceCollide().radius(60));
+        
+        // Draw the links
+        const link = svg.append("g")
+            .selectAll("line")
+            .data(data.links)
+            .enter().append("line")
+            .attr("class", d => `link ${d.type}`)
+            .attr("marker-end", d => d.direction ? "url(#arrow)" : "");
+        
+        // Create node groups
+        const node = svg.append("g")
+            .selectAll(".node")
+            .data(data.nodes)
+            .enter().append("g")
+            .attr("class", "node")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+        
+        // Add circles to the nodes
+        node.append("circle")
+            .attr("r", 20)
+            .attr("class", d => d.type);
+        
+        // Add text labels
+        node.append("text")
+            .attr("dx", 24)
+            .attr("dy", 4)
+            .text(d => `${d.name} (${d.role})`);
+        
+        // Add hover behavior
+        node.on("mouseover", function(event, d) {
+            // Highlight the current node
+            d3.select(this).select("circle")
+                .transition()
+                .duration(200)
+                .attr("r", 25);
+            
+            // Show tooltip with knowledge information
+            tooltip
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 28) + "px")
+                .style("opacity", 1)
+                .html(`<strong>${d.name}</strong> (${d.role})<br>Team: ${d.team}<br>Knowledge: ${d.knowledge.join(", ")}`);
+        })
+        .on("mouseout", function() {
+            // Reset node size
+            d3.select(this).select("circle")
+                .transition()
+                .duration(200)
+                .attr("r", 20);
+            
+            // Hide tooltip
+            tooltip.style("opacity", 0);
+        });
+        
+        // Update positions on each tick of the simulation
+        simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+            
+            node.attr("transform", d => `translate(${d.x}, ${d.y})`);
+        });
+        
+        // Drag functions
+        function dragstarted(event) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            event.subject.fx = event.subject.x;
+            event.subject.fy = event.subject.y;
+        }
+        
+        function dragged(event) {
+            event.subject.fx = event.x;
+            event.subject.fy = event.y;
+        }
+        
+        function dragended(event) {
+            if (!event.active) simulation.alphaTarget(0);
+            event.subject.fx = null;
+            event.subject.fy = null;
+        }
+        
+        // Department filter functionality
+        document.getElementById('department-filter').addEventListener('change', function() {
+            const selectedDepartment = this.value;
+            
+            // Filter nodes based on selection
+            if (selectedDepartment === 'all') {
+                // Show all nodes and links
+                node.style("opacity", 1);
+                link.style("opacity", 0.8);
+            } else {
+                // Show only nodes from selected department and their direct connections
+                const selectedNodeIds = data.nodes
+                    .filter(n => n.team === selectedDepartment)
+                    .map(n => n.id);
+                
+                // Get all links connected to the selected nodes
+                const relevantLinkSourceTargets = new Set();
+                data.links.forEach(l => {
+                    if (selectedNodeIds.includes(l.source.id)) {
+                        relevantLinkSourceTargets.add(l.target.id);
+                    }
+                    if (selectedNodeIds.includes(l.target.id)) {
+                        relevantLinkSourceTargets.add(l.source.id);
+                    }
+                });
+                
+                // Show relevant nodes and links
+                node.style("opacity", d => 
+                    selectedNodeIds.includes(d.id) || relevantLinkSourceTargets.has(d.id) ? 1 : 0.2);
+                
+                link.style("opacity", l => 
+                    (selectedNodeIds.includes(l.source.id) || selectedNodeIds.includes(l.target.id)) ? 0.8 : 0.1);
+            }
+        });
+    </script>
+</body>
+</html>

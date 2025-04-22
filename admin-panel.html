@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel - TacitGraph</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fa;
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background-color: #2c3e50;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar h2 { margin-bottom: 2rem; }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      margin: 1rem 0;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background-color: white;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .content {
+      flex: 1;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>TacitGraph</h2>
+    <a href="dashboard.html">Home</a>
+<a href="knowledge-network.html">Knowledge Network</a>
+<a href="expert-discovery.html">Expert Discovery</a>
+<a href="risk-alerts.html">Risk Alerts</a>
+<a href="lnd-insights.html">L&D Insights</a>
+<a href="admin-panel.html">Admin Panel</a>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h1>Admin Panel</h1>
+    </div>
+    <div class="content">
+      <div class="card">
+        <h3>User Access Management</h3>
+        <p>Grant or revoke access rights for users and teams.</p>
+        <button class="button">Manage Access</button>
+      </div>
+
+      <div class="card">
+        <h3>Knowledge Map Settings</h3>
+        <p>Customize node categories, roles, and thresholds for influence/risk alerts.</p>
+        <button class="button">Configure Map</button>
+      </div>
+
+      <div class="card">
+        <h3>Upload Data</h3>
+        <p>Upload new interaction logs or knowledge contribution data.</p>
+        <button class="button">Upload CSV</button>
+      </div>
+
+      <div class="card">
+        <h3>Generate Reports</h3>
+        <p>Export knowledge insights and employee network summaries.</p>
+        <button class="button">Generate Report</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

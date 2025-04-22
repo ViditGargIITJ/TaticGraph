@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expert Discovery - TacitGraph</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fa;
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background-color: #2c3e50;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar h2 { margin-bottom: 2rem; }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      margin: 1rem 0;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background-color: white;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .content {
+      flex: 1;
+      padding: 2rem;
+    }
+
+    .search-container {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .search-container input {
+      width: 60%;
+      padding: 0.5rem;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .search-container button {
+      padding: 0.5rem 1rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .search-container button:hover {
+      background-color: #2980b9;
+    }
+
+    .expert-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .expert-card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      width: 200px;
+      padding: 1rem;
+      text-align: center;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .expert-card:hover {
+      transform: scale(1.05);
+    }
+
+    .expert-card img {
+      width: 100%;
+      height: 120px;
+      border-radius: 50%;
+    }
+
+    .expert-card h3 {
+      font-size: 18px;
+      margin-top: 1rem;
+    }
+
+    .expert-card p {
+      font-size: 14px;
+      color: #777;
+    }
+
+    .expert-card .expert-role {
+      font-weight: bold;
+      margin-top: 0.5rem;
+      color: #3498db;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>TacitGraph</h2>
+    <a href="dashboard.html">Home</a>
+<a href="knowledge-network.html">Knowledge Network</a>
+<a href="expert-discovery.html">Expert Discovery</a>
+<a href="risk-alerts.html">Risk Alerts</a>
+<a href="lnd-insights.html">L&D Insights</a>
+<a href="admin-panel.html">Admin Panel</a>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h1>Expert Discovery</h1>
+    </div>
+    <div class="content">
+      <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search for experts by name or skill..." />
+        <button onclick="searchExpert()">Search</button>
+      </div>
+
+      <div class="expert-list">
+        <div class="expert-card">
+          <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Expert 1" />
+          <h3>John Doe</h3>
+          <p>Senior Data Scientist</p>
+          <div class="expert-role">Expert in Machine Learning</div>
+        </div>
+
+        <div class="expert-card">
+          <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Expert 2" />
+          <h3>Jane Smith</h3>
+          <p>UX/UI Designer</p>
+          <div class="expert-role">Expert in User Experience</div>
+        </div>
+
+        <div class="expert-card">
+          <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Expert 3" />
+          <h3>Michael Johnson</h3>
+          <p>Full-stack Developer</p>
+          <div class="expert-role">Expert in Web Development</div>
+        </div>
+
+        <div class="expert-card">
+          <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="Expert 4" />
+          <h3>Emma Brown</h3>
+          <p>Cloud Solutions Architect</p>
+          <div class="expert-role">Expert in Cloud Computing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function searchExpert() {
+      const input = document.getElementById("search-input").value.toLowerCase();
+      const expertCards = document.querySelectorAll(".expert-card");
+      
+      expertCards.forEach(card => {
+        const name = card.querySelector("h3").textContent.toLowerCase();
+        const skill = card.querySelector(".expert-role").textContent.toLowerCase();
+        
+        if (name.includes(input) || skill.includes(input)) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+  </script>
+</body>
+</html>

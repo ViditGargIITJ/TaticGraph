@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Political Bias Explainer - Compare Headlines</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --left-color: #2563eb;
+      --center-color: #059669;
+      --right-color: #dc2626;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --header-bg: #1e293b;
+      --text-dark: #1e293b;
+      --text-light: #ffffff;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --border-radius: 8px;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+    
+    header {
+      background-color: var(--header-bg);
+      color: var(--text-light);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    
+    header h1 {
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+    
+    header p {
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    
+    .events-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .event-card {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+      text-align: center;
+      border-top: 4px solid #cbd5e1;
+      transition: transform 0.2s;
+    }
+    
+    .event-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .budget-card {
+      border-top: 4px solid #3b82f6;
+      background-color: #f0f9ff;
+    }
+    
+    .event-card h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+    
+    .event-card p {
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+    
+    .event-card i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #64748b;
+    }
+    
+    .headlines {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .summary {
+      background-color: #fef9c3;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 2rem;
+      position: relative;
+      border-left: 5px solid #eab308;
+    }
+    
+    .summary::before {
+      content: '\f0eb';
+      font-family: 'Font Awesome 5 Free';
+      font-weight: 900;
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      font-size: 1.5rem;
+      color: #eab308;
+    }
+    
+    .summary-content {
+      padding-left: 2.5rem;
+    }
+    
+    .bias-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .bias-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .bias-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .bias-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      padding: 0.75rem;
+      border-radius: var(--border-radius);
+      color: var(--text-light);
+      font-weight: bold;
+    }
+    
+    .left-header {
+      background-color: var(--left-color);
+    }
+    
+    .center-header {
+      background-color: var(--center-color);
+    }
+    
+    .right-header {
+      background-color: var(--right-color);
+    }
+    
+    .source {
+      background-color: #f8fafc;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    
+    .source:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+    }
+    
+    .left { border-left: 5px solid var(--left-color); }
+    .center { border-left: 5px solid var(--center-color); }
+    .right { border-left: 5px solid var(--right-color); }
+    
+    .source-name {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+    
+    .headline {
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    
+    .bias-tag {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: white;
+    }
+    
+    .left-tag { background-color: var(--left-color); }
+    .center-tag { background-color: var(--center-color); }
+    .right-tag { background-color: var(--right-color); }
+    
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .legend-color {
+      width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+    }
+    
+    .legend-left { background-color: var(--left-color); }
+    .legend-center { background-color: var(--center-color); }
+    .legend-right { background-color: var(--right-color); }
+    
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+    
+    .section-title {
+      font-size: 1.5rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI Political Bias Explainer</h1>
+    <p>Compare how different political leanings cover the same news</p>
+  </header>
+  
+  <div class="container">
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color legend-left"></div>
+        <span>Left-Leaning</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color legend-center"></div>
+        <span>Centrist</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color legend-right"></div>
+        <span>Right-Leaning</span>
+      </div>
+    </div>
+    
+    <h2 class="section-title">Trending Topics</h2>
+    
+    <div class="events-container">
+      <div class="event-card">
+        <i class="fas fa-graduation-cap"></i>
+        <h3>New Education Policy</h3>
+        <p>India's education reform</p>
+      </div>
+      
+      <div class="event-card">
+        <i class="fas fa-vote-yea"></i>
+        <h3>2024 General Elections</h3>
+        <p>National election results</p>
+      </div>
+      
+      <div class="event-card">
+        <i class="fas fa-place-of-worship"></i>
+        <h3>Ram Mandir Inauguration</h3>
+        <p>Historical temple inauguration</p>
+      </div>
+      
+      <div class="event-card budget-card">
+        <i class="fas fa-chart-line"></i>
+        <h3>Union Budget 2025</h3>
+        <p>Financial plan for India</p>
+      </div>
+    </div>
+    
+    <h2 class="section-title">Current Analysis: Union Budget 2025</h2>
+    
+    <div class="headlines">
+      <div class="summary">
+        <div class="summary-content">
+          <strong>Summary:</strong> The budget is praised by the right as growth-centric, seen by centrists as cautiously progressive, and criticized by the left for ignoring welfare.
+        </div>
+      </div>
+      
+      <div class="bias-container">
+        <div class="bias-column">
+          <div class="bias-header left-header">
+            <i class="fas fa-arrow-left"></i>
+            <span>Left-Leaning Coverage</span>
+          </div>
+          
+          <div class="source left">
+            <span class="bias-tag left-tag">Left</span>
+            <div class="source-name">Newslaundry</div>
+            <div class="headline">Budget 2025 fails to address job crisis and rural distress.</div>
+          </div>
+          
+          <div class="source left">
+            <span class="bias-tag left-tag">Left</span>
+            <div class="source-name">The Wire</div>
+            <div class="headline">Union Budget neglects the poor and fails to address unemployment.</div>
+          </div>
+          
+          <div class="source left">
+            <span class="bias-tag left-tag">Left</span>
+            <div class="source-name">Scroll.in</div>
+            <div class="headline">Govt's budget prioritizes corporations over people's welfare.</div>
+          </div>
+        </div>
+        
+        <div class="bias-column">
+          <div class="bias-header center-header">
+            <i class="fas fa-balance-scale"></i>
+            <span>Centrist Coverage</span>
+          </div>
+          
+          <div class="source center">
+            <span class="bias-tag center-tag">Center</span>
+            <div class="source-name">The Hindu</div>
+            <div class="headline">Focus on fiscal discipline with moderate social sector push.</div>
+          </div>
+          
+          <div class="source center">
+            <span class="bias-tag center-tag">Center</span>
+            <div class="source-name">NDTV</div>
+            <div class="headline">Budget 2025: A balanced approach with an eye on economic growth.</div>
+          </div>
+          
+          <div class="source center">
+            <span class="bias-tag center-tag">Center</span>
+            <div class="source-name">India Today</div>
+            <div class="headline">Govt announces substantial budget for health and education sectors.</div>
+          </div>
+        </div>
+        
+        <div class="bias-column">
+          <div class="bias-header right-header">
+            <i class="fas fa-arrow-right"></i>
+            <span>Right-Leaning Coverage</span>
+          </div>
+          
+          <div class="source right">
+            <span class="bias-tag right-tag">Right</span>
+            <div class="source-name">Republic TV</div>
+            <div class="headline">Budget 2025: Visionary roadmap for India's economic ascent.</div>
+          </div>
+          
+          <div class="source right">
+            <span class="bias-tag right-tag">Right</span>
+            <div class="source-name">Times Now</div>
+            <div class="headline">Growth-oriented budget to drive India's economic transformation.</div>
+          </div>
+          
+          <div class="source right">
+            <span class="bias-tag right-tag">Right</span>
+            <div class="source-name">Zee News</div>
+            <div class="headline">Budget 2025's pro-business agenda will spur economic growth.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+    <p>© 2025 AI Political Bias Explainer | Helping bridge political divides through media literacy</p>
+  </footer>
+</body>
+</html>

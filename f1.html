@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Political Bias Explainer - Analyze Article</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #1a202c;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .example {
+      background-color: #fefcbf;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 5px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .highlight {
+      background-color: #ffe3e3;
+      border-left: 4px solid #e53e3e;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+    }
+    .result {
+      margin-top: 2rem;
+      background-color: #edf2f7;
+      padding: 1rem;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI Political Bias Explainer</h1>
+    <p>Feature 1: Analyze Article for Political Bias</p>
+  </header>
+  <div class="container">
+    <div class="example">
+      <strong>Example Article:</strong>
+      <p>
+        The government’s recent economic policies have propelled India’s global standing, experts say. <span class="highlight">Massive infrastructure projects and investor-friendly reforms have placed the country on a high growth trajectory.</span> Meanwhile, opposition parties criticize the lack of inclusivity in these initiatives, calling them elitist. <span class="highlight">However, the public sentiment, gauged through recent polls, appears overwhelmingly in support of the ruling party’s agenda.</span>
+      </p>
+    </div>
+
+    <div class="result">
+      <strong>Bias Analysis:</strong><br>
+      <strong>Bias Detected:</strong> <span style='color:red;'>Right-Leaning</span><br>
+      <strong>Indicators:</strong>
+      <ul>
+        <li><strong>Favorable Framing:</strong> Language that portrays government initiatives as unquestionably positive, e.g., "investor-friendly" and "high growth trajectory".</li>
+        <li><strong>Marginalization:</strong> Opposing viewpoints are presented but undermined or labeled, e.g., describing critics as calling policies "elitist".</li>
+        <li><strong>Appeal to Majority:</strong> Using popularity through polls to validate one side, possibly marginalizing dissent.</li>
+      </ul>
+      <strong>Recommendations:</strong>
+      <ul>
+        <li>Cross-check facts with alternate sources.</li>
+        <li>Read opposing viewpoints for a balanced understanding.</li>
+        <li>Be mindful of language that may sway perception subtly.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

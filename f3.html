@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Political Bias Explainer - Compare Headlines</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7fafc;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #1a202c;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    select {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .headlines {
+      margin-top: 2rem;
+    }
+    .summary {
+      background-color: #fefcbf;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+    }
+    .source {
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 5px;
+      background-color: #edf2f7;
+    }
+    .left { border-left: 5px solid #2c5282; }
+    .right { border-left: 5px solid #c53030; }
+    .center { border-left: 5px solid #2f855a; }
+    .generate-button, .quiz-button {
+      display: block;
+      margin-top: 2rem;
+      padding: 0.75rem 1.5rem;
+      background-color: #2b6cb0;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .quiz-card {
+      margin-top: 3rem;
+      padding: 1rem;
+      background-color: #e6fffa;
+      border-left: 5px solid #319795;
+      border-radius: 5px;
+    }
+    .quiz-question {
+      margin-top: 1rem;
+    }
+    .result, .recommendations {
+      margin-top: 2rem;
+      padding: 1rem;
+      border-radius: 5px;
+    }
+    .result { background-color: #f0f4c3; border-left: 5px solid #b5c401; }
+    .recommendations { background-color: #e0f7fa; border-left: 5px solid #00acc1; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI Political Bias Explainer</h1>
+    <p>User Bias Predictor</p>
+  </header>
+  <div class="container">
+    <div class="quiz-card">
+      <h3>Union Budget 2025 Quiz</h3>
+      <p>Test your knowledge about the Union Budget of 2025!</p>
+      <div class="quiz-question">
+        <strong>Question 1:</strong> What is the main focus of the Union Budget 2025?
+        <ul>
+          <li><input type="radio" name="q1" value="left"> Welfare and social justice</li>
+          <li><input type="radio" name="q1" value="center"> Fiscal discipline and economic growth</li>
+          <li><input type="radio" name="q1" value="right"> Corporate tax cuts and privatisation</li>
+        </ul>
+      </div>
+      <div class="quiz-question">
+        <strong>Question 2:</strong> Which sector received the highest allocation in the Union Budget 2025?
+        <ul>
+          <li><input type="radio" name="q2" value="right"> Defense</li>
+          <li><input type="radio" name="q2" value="center"> Infrastructure</li>
+          <li><input type="radio" name="q2" value="left"> Health and education</li>
+        </ul>
+      </div>
+      <div class="quiz-question">
+        <strong>Question 3:</strong> What is the projected GDP growth rate for 2025 according to the Union Budget?
+        <ul>
+          <li><input type="radio" name="q3" value="center"> 6%</li>
+          <li><input type="radio" name="q3" value="right"> 7%</li>
+          <li><input type="radio" name="q3" value="left"> 5%</li>
+        </ul>
+      </div>
+      <div class="quiz-question">
+        <strong>Question 4:</strong> What was the stance on subsidies in the budget?
+        <ul>
+          <li><input type="radio" name="q4" value="left"> Expanded subsidies for poor households</li>
+          <li><input type="radio" name="q4" value="center"> Maintained current levels</li>
+          <li><input type="radio" name="q4" value="right"> Cut down subsidies significantly</li>
+        </ul>
+      </div>
+      <div class="quiz-question">
+        <strong>Question 5:</strong> What tax policy change was introduced?
+        <ul>
+          <li><input type="radio" name="q5" value="right"> Reduction in corporate tax</li>
+          <li><input type="radio" name="q5" value="left"> Increased tax on the super-rich</li>
+          <li><input type="radio" name="q5" value="center"> No major tax change</li>
+        </ul>
+      </div>
+      <button class="quiz-button" onclick="submitQuiz()">Submit Quiz</button>
+      <div id="biasResult" class="result" style="display:none"></div>
+      <div id="recommendationBox" class="recommendations" style="display:none"></div>
+    </div>
+  </div>
+
+  <script>
+    function submitQuiz() {
+      const responses = ['q1', 'q2', 'q3', 'q4', 'q5'];
+      const count = { left: 0, center: 0, right: 0 };
+
+      responses.forEach(q => {
+        const selected = document.querySelector(`input[name="${q}"]:checked`);
+        if (selected) {
+          count[selected.value]++;
+        }
+      });
+
+      const bias = Object.entries(count).reduce((a, b) => a[1] >= b[1] ? a : b)[0];
+      let biasText = `Your answers suggest a <strong>${bias}</strong> leaning.`;
+      let recommendations = '';
+
+      if (bias === 'left') {
+        recommendations = 'You seem to favor progressive policies. Try reading perspectives from center and right-leaning sources like The Hindu (center) or The Economic Times (right) to broaden your view.';
+      } else if (bias === 'right') {
+        recommendations = 'You align with conservative economic approaches. Consider reading articles from center and left-leaning outlets like Indian Express (center) or The Wire (left) for balanced understanding.';
+      } else {
+        recommendations = 'You show a centrist view. It may be helpful to explore more polarized arguments to challenge your thinking and build nuance.';
+      }
+
+      document.getElementById('biasResult').innerHTML = biasText;
+      document.getElementById('biasResult').style.display = 'block';
+      document.getElementById('recommendationBox').innerHTML = `<strong>Recommendations:</strong> <br>${recommendations}`;
+      document.getElementById('recommendationBox').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
